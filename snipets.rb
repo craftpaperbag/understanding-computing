@@ -1,5 +1,10 @@
 expression = Add.new(
-    Multiply.new(Number.new(1), Number.new(2)),
-    Multiply.new(Number.new(3), Number.new(4)))
+  Variable.new(:x), Variable.new(:y)
+)
 
-Machine.new(expression).run
+environment = {
+  x: Number.new(3),
+  y: Number.new(4)
+}
+
+Machine.new(expression, environment).run
