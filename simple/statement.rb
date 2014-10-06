@@ -18,6 +18,10 @@ class DoNothing
   def reducible?
     false
   end
+
+  def evaluate(environment)
+    environment
+  end
 end
 
 class Assign < Struct.new(:name, :expression)
@@ -39,6 +43,10 @@ class Assign < Struct.new(:name, :expression)
     else
       [DoNothing.new, environment.merge({ name => expression })]
     end
+  end
+
+  def evaluate(environment)
+    environment.merge({ name => expression.evaluate(environment) })
   end
 end
 
@@ -72,6 +80,42 @@ class If < Struct.new(:condition, :consequence, :alternative)
       when Boolean.new(false)
         [alternative, environment]
       end
+    end
+  end
+
+  def evaluate(environment)
+    case condition.evaluate(environment)
+    when Boolean.new(true)
+      consequence.evaluate(environment)
+    when Boolean.new(false)
+      alternative.evaluate(environment)
+    end
+  end
+end
+
+class While < Struct.new(:condition, :body)
+  def to_s
+    "while (#{condition}) { #{body} }"
+  end
+
+  def inspect
+    "<<#{self}>>"
+  end
+
+  def reducible?
+    true
+  end
+
+  def reduce(environment)
+    [If.new(condition, Sequence.new(body, self), DoNothing.new), environment]
+  end
+
+  def evaluate(environment)
+    case condition.evaluate(environment)
+    when Boolean.new(true)
+      evaluate(body.evaluate(environment))
+    when Boolean.new(false)
+      environment
     end
   end
 end

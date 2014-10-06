@@ -24,13 +24,10 @@ Machine.new(
 # While
 #
 
-require './simple'
 Machine.new(
   While.new(
     LessThan.new(Variable.new(:x), Number.new(5)),
     Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))
-  ),
-  { x: Number.new(1) }
 ).run
 
 #
@@ -57,9 +54,3 @@ LessThan.new(
   Add.new(Variable.new(:x), Number.new(2)),
   Variable.new(:y)
 ).evaluate({ x: Number.new(2), y: Number.new(5) })
-
-require './simple'
-statement = While.new(
-  LessThan.new(Variable.new(:x), Number.new(5)),
-  Assign.new(:x, Multiply.new(Variable.new(:x), Number.new(3)))
-)
